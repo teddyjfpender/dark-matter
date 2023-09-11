@@ -1,0 +1,17 @@
+{
+  "name": "@dark-matter/data-model",
+  "module": "./src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "bun build ./src/index.ts --outfile=dist/index.js"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "o1js": "^0.12.2"
+  }
+}
