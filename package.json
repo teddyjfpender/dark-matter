@@ -1,0 +1,8 @@
+{
+    "name": "dark-matter",
+    "private": true,
+    "workspaces": [
+      "packages/*"
+    ]
+  }
+  

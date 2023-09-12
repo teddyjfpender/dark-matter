@@ -170,3 +170,9 @@ dist
 
 # build
 ./dist
+
+# .DS_Store (if you're on a Mac)
+.DS_Store
+
+# ledger
+.db
