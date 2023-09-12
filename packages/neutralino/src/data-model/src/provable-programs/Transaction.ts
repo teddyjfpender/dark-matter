@@ -15,7 +15,9 @@ export function createTxArgs(input_length: number, output_length: number) {
 */
 
 export class TxArgs extends Struct({
-  // max 5 inputs and 5 outputs
+  // max 2 inputs and 2 outputs
+  // Ideally these TxArgs would allow for dynamic array lengths, 
+  // but this is not possible in o1js
   inputs: Provable.Array(UTXO, 2),
   outputs: Provable.Array(UTXO, 2),
 }) {
