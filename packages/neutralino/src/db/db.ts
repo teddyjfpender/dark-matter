@@ -1,6 +1,5 @@
 import { Database } from 'bun:sqlite';
-import { EncryptedValue, UTXO, UTXOType } from '../data-model/src';
-import { Field, Group, PublicKey } from 'o1js';
+import { UTXO, UTXOType } from '../data-model/src';
 
 export class LedgerDatabase {
     private db: Database;
