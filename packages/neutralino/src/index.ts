@@ -1,6 +1,6 @@
 import { Elysia } from "elysia";
 import { html } from "@elysiajs/html";
-import { PrivateKey, PublicKey } from "o1js";
+import { Encoding, Field, Poseidon, PrivateKey, PublicKey } from "o1js";
 import { createKeyPair } from "./createKeyPair";
 import { compileProgram } from "./compileProgram";
 import { LedgerDatabase } from "./db/db";
@@ -33,8 +33,8 @@ const app = new Elysia().use(html())
                         })
                         .get("/createUTxO", () => {
                           const keyPairOwner = createKeyPair();
-                          const value = BigInt(1_000_000);
-                          const utxo = new UTXO(PublicKey.fromBase58(keyPairOwner.S), PublicKey.fromBase58(keyPairOwner.V), value);
+                          const value = Field(1_000_000);
+                          const utxo = new UTXO(PublicKey.fromBase58(keyPairOwner.S), PublicKey.fromBase58(keyPairOwner.V), value, Poseidon.hash(Encoding.stringToFields('MINA')));
                           return UTXO.toJSON(utxo);
                         })
                         .get("/", () => "Hello Elysia")

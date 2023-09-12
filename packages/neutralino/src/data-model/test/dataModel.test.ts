@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { Field, Group, Poseidon, PrivateKey, PublicKey, Scalar, verify } from 'o1js';
+import { Encoding, Field, Group, Poseidon, PrivateKey, PublicKey, Scalar, verify } from 'o1js';
 import { KeyPairs, deriveKeyPairs } from '../src/utils/keyDerivation';
 import { PRIVATE_KEY_0, PRIVATE_KEY_1 } from './test_vectors/testVectors';
 import { UTXO } from '../src/dataModel';
@@ -12,6 +12,7 @@ describe('UTXO Tests', () => {
     let keyPairsSender: KeyPairs;
     let keyPairsReceiver: KeyPairs;
     let value: Field;
+    let token: Field;
 
     beforeEach(() => {
         // Initialize the private spend key and value.
@@ -20,9 +21,10 @@ describe('UTXO Tests', () => {
         keyPairsSender = deriveKeyPairs(privSpendKeyBase58Sender);
         keyPairsReceiver = deriveKeyPairs(privSpendKeyBase58Receiver);
         value = Field(1_000_000); // or any number you choose
+        token = Poseidon.hash(Encoding.stringToFields('MINA'));
     });
     it('should create a UTXO convert it to JSON and back', () => {
-        const utxo = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), value);
+        const utxo = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), value, token);
         expect(utxo).toBeDefined();
         const utxoJSON = UTXO.toJSON(utxo);
         expect(utxoJSON).toBeDefined();
@@ -32,12 +34,12 @@ describe('UTXO Tests', () => {
     });
     it('should create a transaction with 2 inputs and 2 outputs', () => {
         // Create 2 UTXOs -- these are spendable b
-        const utxo1 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), value);
-        const utxo2 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), value);
+        const utxo1 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), value, token);
+        const utxo2 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), value, token);
 
         // Create 2 outputs
-        const output1 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), value);
-        const output2 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), value);
+        const output1 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), value, token);
+        const output2 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), value, token);
 
         // Create a transaction public inputs and outputs
         const tx = new TxArgs([utxo1, utxo2], [output1, output2]);
@@ -52,12 +54,12 @@ describe('UTXO Tests', () => {
     });
     it('should check if the spender of the UTxO is the owner', () => {
         // Create 2 UTXOs -- these are spendable by the sender
-        const utxo1 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), Field(100));
-        const utxo2 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), Field(50));
+        const utxo1 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), Field(100), token);
+        const utxo2 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), Field(50), token);
 
         // Create 2 outputs
-        const output1 = new UTXO(PublicKey.fromBase58(keyPairsReceiver.S), PublicKey.fromBase58(keyPairsReceiver.V), Field(140));
-        const output2 = new UTXO(PublicKey.fromBase58(keyPairsReceiver.S), PublicKey.fromBase58(keyPairsReceiver.V), Field(10));
+        const output1 = new UTXO(PublicKey.fromBase58(keyPairsReceiver.S), PublicKey.fromBase58(keyPairsReceiver.V), Field(140), token);
+        const output2 = new UTXO(PublicKey.fromBase58(keyPairsReceiver.S), PublicKey.fromBase58(keyPairsReceiver.V), Field(10), token);
 
         // Create a transaction public inputs and outputs
         const tx = new TxArgs([utxo1, utxo2], [output1, output2]);
@@ -93,12 +95,12 @@ describe('UTXO Tests', () => {
     
     it('should create a transaction with 2 inputs and 2 outputs, compile the transaction program and proof should be valid', async () => {
         // Create 2 UTXOs -- these are spendable by the sender
-        const utxo1 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), Field(100));
-        const utxo2 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), Field(50));
+        const utxo1 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), Field(100), token);
+        const utxo2 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), Field(50), token);
 
         // Create 2 outputs
-        const output1 = new UTXO(PublicKey.fromBase58(keyPairsReceiver.S), PublicKey.fromBase58(keyPairsReceiver.V), Field(140));
-        const output2 = new UTXO(PublicKey.fromBase58(keyPairsReceiver.S), PublicKey.fromBase58(keyPairsReceiver.V), Field(10));
+        const output1 = new UTXO(PublicKey.fromBase58(keyPairsReceiver.S), PublicKey.fromBase58(keyPairsReceiver.V), Field(140), token);
+        const output2 = new UTXO(PublicKey.fromBase58(keyPairsReceiver.S), PublicKey.fromBase58(keyPairsReceiver.V), Field(10), token);
 
         // Create a transaction public inputs and outputs
         const tx = new TxArgs([utxo1, utxo2], [output1, output2]);

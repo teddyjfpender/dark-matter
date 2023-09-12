@@ -3,7 +3,7 @@
 Powered by [Bun](https://github.com/oven-sh/bun). This is just a demo.
 
 ## Neutralino 🚧 
-A 🔥 blazingly fast 🔥 ElysiaJS server, Neutralino provides foundational services for the Dark Matter ecosystem. With its `LedgerDatabase`, it emulates blockchain ledger characteristics, permitting the storage and querying of UTxOs. In essence, it functions similarly to a rudimentary blockchain node.
+A 🔥 blazingly fast 🔥 ElysiaJS server, Neutralino provides foundational services for Dark Matter. With its `LedgerDatabase`, it emulates blockchain ledger characteristics, permitting the storage and querying of UTxOs. In essence, it functions similarly to a rudimentary blockchain node.
 
 ### TODO
 - Add endpoints for submitting transaction proofs.

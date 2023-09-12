@@ -31,14 +31,16 @@ export interface UTXOType {
     oneTimeAddress: PublicKey;
     ephemeralPublicKey: PublicKey;
     value: Field;
+    Token: Field;
 }
 
 export class UTXO extends Struct({
     oneTimeAddress: PublicKey,
     ephemeralPublicKey: PublicKey,
     value: Field,
+    Token: Field, 
   }) implements UTXOType {
-    constructor(publicSpendKey: PublicKey, publicViewKey: PublicKey, value: Field) {
+    constructor(publicSpendKey: PublicKey, publicViewKey: PublicKey, value: Field, Token: Field) {
 
       // Generate a random private key for the transaction.
       const r = Provable.witness(Scalar, () => Scalar.random());
@@ -59,6 +61,7 @@ export class UTXO extends Struct({
         oneTimeAddress: PublicKey.fromGroup(K),
         ephemeralPublicKey: R,
         value: value,
+        Token: Token,
       });
     }
     toJSON(utxo: UTXOType) {
@@ -76,3 +79,50 @@ export class UTXO extends Struct({
       return { oneTimeAddress, ephemeralPublicKey, value} as UTXOType;
     }
   }
+
+  export interface LimitOrderType extends UTXOType {
+    price: Field;
+    quantity: Field;
+    tokenSwapFor: Field; 
+    direction: Field //'buy' | 'sell';
+}
+
+export class LimitOrder extends UTXO implements LimitOrderType {
+    price: Field;
+    quantity: Field;
+    tokenSwapFor: Field;
+    direction: Field // Posiedon.hash(Encoding.stringToFields('buy' | 'sell'));
+
+    constructor(publicSpendKey: PublicKey, publicViewKey: PublicKey, value: Field, token: Field, price: Field, quantity: Field, tokenSwapFor: Field, direction: Field) {
+        super(publicSpendKey, publicViewKey, value, token);
+
+        this.price = price;
+        this.quantity = quantity;
+        this.tokenSwapFor = token;
+        this.direction = direction;
+    }
+
+    toJSON(): { oneTimeAddress: string; ephemeralPublicKey: string; value: string; price: string; quantity: string; tokenSwapFor: string; direction: Field } {
+      const baseJSON = super.toJSON(this);
+      return {
+          ...baseJSON,
+          price: this.price.toBigInt().toString(),
+          quantity: this.quantity.toBigInt().toString(),
+          tokenSwapFor: this.tokenSwapFor.toBigInt().toString(),
+          direction: this.direction
+      };
+  }
+
+    fromJSON(orderData: string): LimitOrderType {
+        const orderObject = JSON.parse(orderData);
+        const baseUTXO = super.fromJSON(orderData);
+
+        return {
+            ...baseUTXO,
+            price: Field.from(orderObject.price),
+            quantity: Field.from(orderObject.quantity),
+            tokenSwapFor: Field.from(orderObject.tokenSwapFor),
+            direction: orderObject.direction
+        };
+    }
+}
