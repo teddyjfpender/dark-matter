@@ -6,25 +6,29 @@ import { UTXO } from '../src/dataModel';
 import { beforeEach } from 'bun:test';
 import { PrivateTxArgs, Transaction, TransactionProof, TxArgs } from '../src/provable-programs';
 
+
+/**
+ * Note: when running these tests
+ * ensure you provide a timeout, e.g.: bun test --timeout 500000
+ */
 describe('UTXO Tests', () => {
     let privSpendKeyBase58Sender: string;
     let privSpendKeyBase58Receiver: string;
     let keyPairsSender: KeyPairs;
     let keyPairsReceiver: KeyPairs;
-    let value: Field;
+    let amount: Field;
     let token: Field;
 
     beforeEach(() => {
-        // Initialize the private spend key and value.
         privSpendKeyBase58Sender = PRIVATE_KEY_0;
         privSpendKeyBase58Receiver = PRIVATE_KEY_1;
         keyPairsSender = deriveKeyPairs(privSpendKeyBase58Sender);
         keyPairsReceiver = deriveKeyPairs(privSpendKeyBase58Receiver);
-        value = Field(1_000_000); // or any number you choose
+        amount = Field(1_000_000); // or any number you choose
         token = Poseidon.hash(Encoding.stringToFields('MINA'));
     });
     it('should create a UTXO convert it to JSON and back', () => {
-        const utxo = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), value, token);
+        const utxo = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), amount, token);
         expect(utxo).toBeDefined();
         const utxoJSON = UTXO.toJSON(utxo);
         expect(utxoJSON).toBeDefined();
@@ -34,12 +38,12 @@ describe('UTXO Tests', () => {
     });
     it('should create a transaction with 2 inputs and 2 outputs', () => {
         // Create 2 UTXOs -- these are spendable b
-        const utxo1 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), value, token);
-        const utxo2 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), value, token);
+        const utxo1 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), amount, token);
+        const utxo2 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), amount, token);
 
         // Create 2 outputs
-        const output1 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), value, token);
-        const output2 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), value, token);
+        const output1 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), amount, token);
+        const output2 = new UTXO(PublicKey.fromBase58(keyPairsSender.S), PublicKey.fromBase58(keyPairsSender.V), amount, token);
 
         // Create a transaction public inputs and outputs
         const tx = new TxArgs([utxo1, utxo2], [output1, output2]);
@@ -120,8 +124,10 @@ describe('UTXO Tests', () => {
 
         // Create a proof
         console.log('Creating a proof...');
+        const startTime = new Date().getTime(); // Record the start time
         const proof = await Transaction.spend(tx, txPrivateArgs) as TransactionProof;
-        console.log('Proof created.');
+        const endTime = new Date().getTime(); // Record the end time
+        console.log('Proof created. Time taken: ' + (endTime - startTime) + 'ms');
 
         // Verify the proof
         console.log('Verifying the proof...');

@@ -1,4 +1,4 @@
-import { Transaction } from "./provable-programs";
+import { Transaction } from "./data-model/src/provable-programs";
 
 export const compileProgram = async () => {
     const startTime = new Date().getTime(); // Record the start time
