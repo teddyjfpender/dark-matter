@@ -149,7 +149,12 @@ export const Transaction = Experimental.ZkProgram({
         const valueInputs = publicInputs.getInputs().map((utxo) => utxo.amount).reduce((a, b) => a.add(b));
         const valueOutputs = publicInputs.getOutputs().map((utxo) => utxo.amount).reduce((a, b) => a.add(b));
 
+        // Ensure the tokens are conserved
+        const tokenInputs = publicInputs.getInputs().map((utxo) => utxo.Token).reduce((a, b) => a.add(b));
+        const tokenOutputs = publicInputs.getOutputs().map((utxo) => utxo.Token).reduce((a, b) => a.add(b));
+
         valueInputs.assertEquals(valueOutputs, "Value conservation failed");
+        tokenInputs.assertEquals(tokenOutputs, "Token conservation failed");
 
         return publicInputs;
       },

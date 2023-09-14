@@ -20,7 +20,6 @@ This package currently resides within `Neutralino` due to the lack of stable mon
 
 ### UTXO (Unspent Transaction Output)
 `UTXO` class embodies the concept of an unspent transaction output in the context of blockchain. Each UTXO is uniquely identified by an address (`oneTimeAddress`) and has an associated ephemeral public key (`ephemeralPublicKey`) and value (`value`).
-
 **Constructor Logic**:
 - Generates a random private key for the transaction.
 - Computes a corresponding public key.
