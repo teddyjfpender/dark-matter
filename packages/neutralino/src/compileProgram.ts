@@ -1,4 +1,4 @@
-import { Transaction } from "./data-model/src/provable-programs";
+import { Transaction } from "@dark-matter/data-model"; //"./data-model/src/provable-programs";
 
 export const compileProgram = async () => {
     const startTime = new Date().getTime(); // Record the start time

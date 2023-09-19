@@ -1,17 +1,19 @@
 {
   "name": "@dark-matter/neutralino",
   "version": "1.0.50",
+  "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir ./dist"
   },
   "dependencies": {
+    "@dark-matter/data-model": "link:@dark-matter/data-model",
     "@elysiajs/html": "^0.6.5",
+    "bun-types": "^1.0.2",
     "elysia": "latest",
-    "o1js": "^0.12.2"
-  },
-  "devDependencies": {
-    "bun-types": "latest"
+    "o1js": "^0.12.2",
+    "typescript": "^5.2.2"
   },
   "module": "src/index.js"
 }

@@ -3,12 +3,11 @@ import { html } from "@elysiajs/html";
 import { Encoding, Field, Poseidon, PrivateKey, PublicKey } from "o1js";
 import { createKeyPair } from "./createKeyPair";
 import { compileProgram } from "./compileProgram";
-import { LedgerDatabase } from "./db/db";
-import { UTXO, UTXOType } from "./data-model/src";
+import { UTXO, UTXOType } from "@dark-matter/data-model";
 /*
 Can query the database using the following commands:
  -- Add to UTxO to the ledger
- curl -X POST -H "Content-Type: application/json" \
+curl -X POST -H "Content-Type: application/json" \
 -d '{"oneTimeAddress":"B62qn9iQTjYg4hR78mmenFJ2GVW5xhwzSeK6LfM5nYPXqxffpnpjBx6","ephemeralPublicKey":"B62qqx2VcYRH5edeJkbUP2RBXJEcU2GcqeoHmCA1zwWRYkqL9dsdpL4","commitment":{"x":"99587528700117342553657768151346921242014553096535801584791725535172428927","y":"28624866743977107607778710355206715619110676813883473550279656574169114857791"},"encryptedValue":{"publicKey":"B62qrwHZiSHyERXHoi1EFt1yeL2CmjMkGjJFQesChhMK31rpCo3yPxK","cipherText":["5466964931218400116315849117155020874302392418945785016464051696766223933172","2566864109691498639232775632761066856984955656722526627978752314186098679474"]}}' \
 http://localhost:3000/AddUTxO
 
@@ -24,17 +23,13 @@ http://localhost:3000/AddUTxO
 
 
 */
-const app = new Elysia().use(html())
-                        .decorate('db', new LedgerDatabase())
-                        .get("/UTxOs", ({ db }) => db.getUTxOs())
-                        .post("/AddUTxO", async ({ db, body }) => {
-                          const utxo = await db.addUTxO(body as string);
-                          return utxo;
-                        })
+const app = new Elysia()
                         .get("/createUTxO", () => {
                           const keyPairOwner = createKeyPair();
-                          const value = Field(1_000_000);
-                          const utxo = new UTXO(PublicKey.fromBase58(keyPairOwner.S), PublicKey.fromBase58(keyPairOwner.V), value, Poseidon.hash(Encoding.stringToFields('MINA')));
+                          const amount = Field(1_000_000);
+                          const token = Poseidon.hash(Encoding.stringToFields('MINA'));
+                          const utxo = new UTXO(PublicKey.fromBase58(keyPairOwner.S), PublicKey.fromBase58(keyPairOwner.V), amount, token);
+                          console.log(`UTXO: ${utxo}`);
                           return UTXO.toJSON(utxo);
                         })
                         .get("/", () => "Hello Elysia")

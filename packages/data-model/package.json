@@ -1,0 +1,17 @@
+{
+  "name": "@dark-matter/data-model",
+  "version": "1.0.1",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run --watch src/index.ts"
+  },
+  "dependencies": {
+    "o1js": "^0.12.2",
+    "typescript": "^5.2.2"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "module": "src/index.js"
+}

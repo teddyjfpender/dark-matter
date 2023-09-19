@@ -1,4 +1,4 @@
-import { deriveKeyPairs } from "./data-model/src/utils/keyDerivation";
+import { deriveKeyPairs } from "@dark-matter/data-model";
 import { PrivateKey } from "o1js";
 
 export const createKeyPair = () => {
