@@ -3,13 +3,15 @@
 Powered by [Bun](https://github.com/oven-sh/bun). This is just a demo.
 
 ## Neutralino 🚧 
-A 🔥 blazingly fast 🔥 ElysiaJS server, Neutralino provides foundational services for Dark Matter. With its `LedgerDatabase`, it emulates blockchain ledger characteristics, permitting the storage and querying of UTxOs. In essence, it functions similarly to a rudimentary blockchain node.
+A 🔥 blazingly fast 🔥 ElysiaJS server, Neutralino provides foundational services for Dark Matter. It should contain a `LedgerDatabase` (from `bun:sqlite`) that emulates blockchain ledger characteristics, permitting the storage and querying of UTxOs. In essence, it functions similarly to a rudimentary blockchain node.
 
 ### TODO
+- Re-implement the `bun:sqlite` `LedgerDatabase`.
 - Add endpoints for submitting transaction proofs.
+    - Configure an evovling ledger state.
 
-## Data Model
-This package currently resides within `Neutralino` due to the lack of stable monorepo support in Bun. The Data Model package is pivotal to Dark Matter, defining its foundational data structures. Key components include:
+## Data Model - `@dark-matter/data-model`
+The data model package is pivotal to Dark Matter, defining its foundational data structures. Key components include:
 
 ### EncryptedValue
 `EncryptedValue` class represents a value that has been encrypted. The structure consists of a public key (`publicKey`) and a cipher text (`cipherText`). This hasn't been implemented in the `Transaction` ZkProgram yet.
@@ -30,7 +32,7 @@ This package currently resides within `Neutralino` due to the lack of stable mon
 - `toJSON(utxo: UTXOType)`: Transforms the UTXO into a JSON format.
 - `fromJSON(utxo: string)`: Parses a JSON representation of the UTXO, generating the corresponding `UTXOType` object.
 
-## Provable Programs
+## Provable Programs - `@dark-matter/data-model`
 
 Provable programs form the backbone of the cryptographic assurance offered by Dark Matter. These programs allow for certain properties or conditions to be proven without revealing the actual data or the specifics of the computation. Let's delve into the core components:
 
